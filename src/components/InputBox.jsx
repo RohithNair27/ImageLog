@@ -1,0 +1,34 @@
+import {StyleSheet, Text, View, TextInput} from 'react-native';
+import React from 'react';
+
+const InputBox = ({
+  placeHolder,
+  value,
+  keyBoardType,
+  onValueChange,
+  keyProps,
+}) => {
+  return (
+    <TextInput
+      placeholder={placeHolder}
+      placeholderTextColor={'gray'}
+      style={styles.textBody}
+      value={value}
+      onChangeText={text => onValueChange(keyProps, text)}
+      inputMode={keyBoardType}
+    />
+  );
+};
+
+export default InputBox;
+
+const styles = StyleSheet.create({
+  textBody: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'black',
+    fontWeight: '600',
+    height: '100%',
+    width: '100%',
+  },
+});
