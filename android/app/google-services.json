@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "899728241279",
+    "project_id": "imagelogs-a080c",
+    "storage_bucket": "imagelogs-a080c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:899728241279:android:b029203ddf7d7fc3fd454a",
+        "android_client_info": {
+          "package_name": "com.imagelog"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQpiLHAp7-CzyoLHtjVlUDfimV9apfcU0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

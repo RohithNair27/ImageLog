@@ -3,7 +3,7 @@ import React from 'react';
 
 const PictureView = ({route}) => {
   const {uri} = route.params;
-  console.log(uri);
+
   const localImagePatch = uri;
   return (
     <View style={styles.container}>

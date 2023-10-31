@@ -15,6 +15,7 @@ import {request, RESULTS, PERMISSIONS} from 'react-native-permissions';
 import GetCurrentDay from '../utils/TimeUtils';
 import {storeData, getData} from '../utils/Storage';
 import {removeData} from '../utils/Storage';
+import firestore from '@react-native-firebase/firestore';
 
 const Attendance = ({navigation}) => {
   const [seconds, setSeconds] = useState(0);
@@ -33,6 +34,23 @@ const Attendance = ({navigation}) => {
   });
   const [checkedIn, setCheckIn] = useState(true);
   const [allData, setAllData] = useState([]);
+  const [sync, setSync] = useState(false);
+
+  const ref = firestore().collection('Data');
+
+  const uploadDataFireBase = () => {
+    console.log(allData);
+    ref
+      .add({
+        logData: allData,
+      })
+      .then(() => {
+        console.log('working');
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
 
   //counter logic
   useEffect(() => {
@@ -136,6 +154,7 @@ const Attendance = ({navigation}) => {
     const values = await getData();
 
     setAllData(values);
+    uploadDataFireBase();
   };
 
   const handleNavigation = uri => {
@@ -148,7 +167,7 @@ const Attendance = ({navigation}) => {
       storeData(Data);
     }
     getDataFromStorage();
-
+    // uploadDataFireBase();
     // removeData();
   }, [sendData]);
 
@@ -161,8 +180,8 @@ const Attendance = ({navigation}) => {
           resizeMode="contain"
           style={styles.image}
         />
-        <Text style={styles.headerText}>Hey! Rohith</Text>
-        <Switch /> */}
+        <Text style={styles.headerText}>Hey! Rohith</Text> */}
+        <Switch switchState={sync} />
       </View>
       <View
         style={
