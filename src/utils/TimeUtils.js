@@ -18,6 +18,8 @@ const GetCurrentDay = () => {
   const currentDay = daysOfWeek[dayIndex];
   const currentDayAbbreviation = currentDay.slice(0, 3);
   const date = currentTime.getDate();
+  const month = currentTime.getMonth();
+  const year = currentTime.toISOString().slice(0, 4);
 
   //time
   const hours = currentTime.getHours();
@@ -30,6 +32,8 @@ const GetCurrentDay = () => {
     minutes: minutes,
     seconds: seconds,
     date: date,
+    month: month,
+    year: year,
   };
 };
 

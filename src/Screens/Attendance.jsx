@@ -5,6 +5,8 @@ import {
   Image,
   ScrollView,
   Dimensions,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState, useContext} from 'react';
 import Switch from '../components/switch';
@@ -13,98 +15,55 @@ import DailyInfo from '../components/DailyInfo';
 import {launchCamera} from 'react-native-image-picker';
 import {request, RESULTS, PERMISSIONS} from 'react-native-permissions';
 import GetCurrentDay from '../utils/TimeUtils';
-import {storeData, getData} from '../utils/Storage';
-import {removeData} from '../utils/Storage';
-import firestore from '@react-native-firebase/firestore';
+import {storeData, getData, removeData} from '../utils/Storage';
+import {uploadDataFireBase} from '../utils/Firebase';
+import InputBox from '../components/InputBox';
 
 const Attendance = ({navigation}) => {
-  const [seconds, setSeconds] = useState(0);
-  const [minutes, setMinutes] = useState(0);
-  const [hours, setHours] = useState(0);
-  const [sendData, setSendData] = useState(false);
+  const [newtworkState, setnewtworkState] = useState(true);
+  const [waitingForUpload, setWaitingForUpload] = useState(false);
   const [Data, setData] = useState({
-    Date: '',
-    Day: '',
-    CheckInImageUrl: '',
-    CheckOutImageUrl: '',
-    startTime: null,
-    endTime: null,
-    seconds: '',
+    checkIn: {
+      Date: '',
+      Day: '',
+      CheckInImageUrl: '',
+      startTime: null,
+      endTime: null,
+      seconds: '',
+      EmployeeIdEntered: '',
+      month: '',
+      year: '',
+    },
+    checkOut: {
+      Date: '',
+      Day: '',
+      CheckOutImageUrl: '',
+      startTime: null,
+      endTime: null,
+      seconds: '',
+      EmployeeIdEntered: '',
+      month: '',
+      year: '',
+    },
+
     // TotalTime: '',
   });
-  const [checkedIn, setCheckIn] = useState(true);
+  const [EmployeeId, setEmployeeID] = useState('');
   const [allData, setAllData] = useState([]);
-  const [sync, setSync] = useState(false);
+  const [profilePictureUri, setProfilePictureUri] = useState(false);
 
-  const ref = firestore().collection('Data');
-
-  const uploadDataFireBase = () => {
-    console.log(allData);
-    ref
-      .add({
-        logData: allData,
-      })
-      .then(() => {
-        console.log('working');
-      })
-      .catch(e => {
-        console.log(e);
-      });
+  const changeNetworkMode = () => {
+    setnewtworkState(!newtworkState);
   };
 
-  //counter logic
-  useEffect(() => {
-    let interval;
-
-    if (!checkedIn) {
-      interval = setInterval(() => {
-        setSeconds(prevSeconds => {
-          if (prevSeconds === 59) {
-            setMinutes(prevMinutes => {
-              if (prevMinutes === 59) {
-                setHours(prevHours => prevHours + 1);
-                return 0;
-              }
-              return prevMinutes + 1;
-            });
-            return 0;
-          }
-          return prevSeconds + 1;
-        });
-      }, 1000);
-    } else {
-      clearInterval(interval);
-    }
-
-    return () => clearInterval(interval);
-  }, [checkedIn]);
-
-  const onClickCheckOut = imageUri => {
-    const currentHourTime = GetCurrentDay().hours;
-    const GetDay = GetCurrentDay().abbreviation;
-    const GetSeconds = GetCurrentDay().seconds;
-    setData(prevData => ({
-      ...prevData,
-      endTime: currentHourTime,
-      CheckOutImageUrl: imageUri,
-      Day: GetDay,
-      seconds: GetSeconds,
-    }));
-    setSendData(!sendData);
+  const handleValueChange = changed => {
+    setEmployeeID(changed);
   };
 
-  //CheckIn
-  const onClickCheckIn = imageUri => {
-    const currentHourTime = GetCurrentDay().hours;
-    const currentDate = GetCurrentDay().date;
-    console.log(currentHourTime);
-    setData(prevData => ({
-      ...prevData,
-      startTime: currentHourTime,
-      CheckInImageUrl: imageUri,
-      Date: currentDate,
-    }));
-  };
+  const Alerts = (text1, text2) =>
+    Alert.alert(text1, text2, [
+      {text: 'OK', onPress: () => console.log('OK Pressed')},
+    ]);
 
   //Andriod permission
   const getMobilePermission = async () => {
@@ -120,6 +79,7 @@ const Attendance = ({navigation}) => {
       console.error(error);
     }
   };
+
   //This is used to take image from camera
   const getProfilePictureDevice = () => {
     const options = {
@@ -135,26 +95,73 @@ const Attendance = ({navigation}) => {
         console.log('Image picker error: ', response.error);
       } else {
         let imageUri = response.assets?.[0]?.uri;
-
-        if (checkedIn === true) {
-          onClickCheckIn(imageUri);
-          setSeconds(0);
-          setHours(0);
-          setMinutes(0);
-          setCheckIn(!checkedIn);
-        } else {
-          onClickCheckOut(imageUri);
-          setCheckIn(!checkedIn);
-        }
+        // console.log(imageUri);
+        setProfilePictureUri(imageUri);
       }
+    });
+  };
+
+  const SendDataToFirebase = async () => {
+    const storageData = await getData();
+
+    storageData.map(data => {
+      console.log('function logged');
+      uploadDataFireBase(data);
+    });
+  };
+
+  const onClickCheckOut = () => {
+    const currentHourTime = GetCurrentDay().hours;
+    const GetDay = GetCurrentDay().abbreviation;
+    const GetSeconds = GetCurrentDay().seconds;
+    const currentDate = GetCurrentDay().date;
+    const currentMonth = GetCurrentDay().month;
+    const currentYear = GetCurrentDay().year;
+    setData({
+      ...Data,
+      checkOut: {
+        Date: currentDate,
+        Day: GetDay,
+        CheckInImageUrl: profilePictureUri,
+        startTime: currentHourTime,
+        endTime: currentHourTime,
+        seconds: GetSeconds,
+        EmployeeIdEntered: EmployeeId,
+        month: currentMonth,
+        year: currentYear,
+      },
+    });
+  };
+
+  //CheckIn
+  const onClickCheckIn = () => {
+    const currentHourTime = GetCurrentDay().hours;
+    const GetDay = GetCurrentDay().abbreviation;
+    const GetSeconds = GetCurrentDay().seconds;
+    const currentDate = GetCurrentDay().date;
+    const currentMonth = GetCurrentDay().month;
+    const currentYear = GetCurrentDay().year;
+
+    setData({
+      ...Data,
+      checkIn: {
+        Date: currentDate,
+        Day: GetDay,
+        CheckInImageUrl: profilePictureUri,
+        startTime: currentHourTime,
+        endTime: currentHourTime,
+        seconds: GetSeconds,
+        EmployeeIdEntered: EmployeeId,
+        month: currentMonth,
+        year: currentYear,
+      },
     });
   };
 
   const getDataFromStorage = async () => {
     const values = await getData();
-
     setAllData(values);
-    uploadDataFireBase();
+    // console.log(values);
   };
 
   const handleNavigation = uri => {
@@ -162,78 +169,125 @@ const Attendance = ({navigation}) => {
     navigation.navigate('PictureView', {uri});
   };
 
-  useEffect(() => {
-    if (Data.Date !== '') {
-      storeData(Data);
+  const storeInAsync = () => {
+    if (Data.checkIn.Date === '') {
+      storeData(Data.checkOut, 'checkOut');
+    } else {
+      storeData(Data.checkIn, 'checkIn');
     }
-    getDataFromStorage();
-    // uploadDataFireBase();
-    // removeData();
-  }, [sendData]);
+
+    setData({
+      checkIn: {
+        Date: '',
+        Day: '',
+        CheckInImageUrl: '',
+        startTime: null,
+        endTime: null,
+        seconds: '',
+        EmployeeIdEntered: '',
+      },
+      checkOut: {
+        Date: '',
+        Day: '',
+        CheckOutImageUrl: '',
+        startTime: null,
+        endTime: null,
+        seconds: '',
+        EmployeeIdEntered: '',
+      },
+    });
+    setProfilePictureUri(false);
+    setEmployeeID('');
+  };
+
+  useEffect(() => {
+    if (
+      Data.checkIn.CheckInImageUrl !== '' ||
+      Data.checkOut.CheckOutImageUrl !== ''
+    ) {
+      storeInAsync();
+      getDataFromStorage();
+    }
+    if (
+      (Data.checkIn.CheckInImageUrl === '' ||
+        Data.checkIn.EmployeeIdEntered === '') &&
+      Data.checkIn.Date !== ''
+    ) {
+      // console.log(Data.checkIn.Date);
+      Alerts('Incomplete!!', 'Please enter Image and EmployeeId');
+    }
+
+    if (
+      Data.checkOut.CheckOutImageUrl === '' &&
+      Data.checkOut.EmployeeIdEntered === '' &&
+      Data.checkOut.Date !== ''
+    ) {
+      Alerts('Incomplete!!', 'Please enter Image and EmployeeId');
+    }
+  }, [Data]);
+
+  useEffect(() => {
+    if (newtworkState === true) {
+      SendDataToFirebase();
+    }
+    console.log(allData);
+  }, [allData]);
 
   useState;
   return (
     <View style={styles.Body}>
       <View style={styles.header}>
-        {/* <Image
-          source={require('../assets/Images/Image4.jpg')}
-          resizeMode="contain"
-          style={styles.image}
-        />
-        <Text style={styles.headerText}>Hey! Rohith</Text> */}
-        <Switch switchState={sync} />
-      </View>
-      <View
-        style={
-          checkedIn
-            ? styles.checkInContainer
-            : {...styles.checkInContainer, borderColor: '#f84a55'}
-        }>
-        <Text
-          style={
-            checkedIn
-              ? styles.todayText
-              : {...styles.todayText, color: '#f84a55'}
-          }>
-          Today
-        </Text>
+        <Text style={styles.headerText}>Online</Text>
+        <Switch switchState={newtworkState} onPress={changeNetworkMode} />
 
-        <Text style={styles.timeText}>
-          {hours.toString().padStart(2, '0')}:
-          {minutes.toString().padStart(2, '0')}:
-          {seconds.toString().padStart(2, '0')}
-        </Text>
-        <Text style={styles.timeTrackedText}>Total Time Tracked</Text>
-        <View style={styles.buttonContainer}>
+        <Text style={styles.headerText}>offline</Text>
+      </View>
+      <View style={styles.ImageBody}>
+        {profilePictureUri === false ? (
+          <Image
+            source={require('../assets/Images/demoimage.png')}
+            resizeMode="contain"
+            style={styles.image}
+          />
+        ) : (
+          <Image
+            source={{uri: profilePictureUri}}
+            resizeMode="contain"
+            style={styles.image}
+          />
+        )}
+      </View>
+      <View style={styles.mobileInputbody}>
+        <InputBox
+          placeHolder={'employee Id'}
+          value={EmployeeId}
+          onValueChange={handleValueChange}
+          keyBoardType={'tel'}
+          maxLength={6}
+        />
+      </View>
+      <View style={styles.button}>
+        <Button
+          placeHolder="Take Image"
+          backGroundColor={'#05aaf7'}
+          onPress={getMobilePermission}
+        />
+      </View>
+      <ActivityIndicator size={30} animating={waitingForUpload} />
+      <View style={styles.checkButtonBody}>
+        <View style={styles.checkButton}>
           <Button
-            placeHolder={checkedIn ? 'Check In' : 'Check Out'}
-            backGroundColor={checkedIn ? '#05aaf7' : '#f84a55'}
-            onPress={getMobilePermission}
+            placeHolder="Check In"
+            backGroundColor={'#05aaf7'}
+            onPress={onClickCheckIn}
           />
         </View>
-      </View>
-      <View style={styles.attendanceHistory}>
-        <View
-          style={
-            checkedIn
-              ? styles.listHeader
-              : {...styles.listHeader, backgroundColor: '#f84a55'}
-          }>
-          <Text style={styles.listHeaderDate}>Date</Text>
-          <Text style={styles.listHeaderDate}>Check In</Text>
-          <Text style={styles.listHeaderDate}>Check Out</Text>
-          <Text style={styles.listHeaderDate}>Total Hr's</Text>
-        </View>
-        <View style={{width: '90%', top: '2%'}}>
-          <ScrollView>
-            {allData?.map(element => {
-              return (
-                <View style={styles.dailyInfoContainer} key={element.seconds}>
-                  <DailyInfo element={element} navivation={handleNavigation} />
-                </View>
-              );
-            })}
-          </ScrollView>
+        <View style={styles.checkButton}>
+          <Button
+            placeHolder="Check Out"
+            backGroundColor={'#f84a55'}
+            onPress={onClickCheckOut}
+          />
         </View>
       </View>
     </View>
@@ -245,25 +299,51 @@ const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
 const styles = StyleSheet.create({
   Body: {
-    // borderWidth: 1,
     backgroundColor: 'white',
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  header: {
+    width: '80%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
   image: {
-    height: '70%',
-    width: '15%',
+    height: 150,
+    width: 150,
     alignItems: 'center',
+    borderRadius: 100,
     justifyContent: 'center',
   },
-  header: {
-    // borderWidth: 1,
-    height: '10%',
+  ImageBody: {
+    height: '40%',
     width: '85%',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
+  },
+  mobileInputbody: {
+    backgroundColor: '#f1f1f3',
+    marginVertical: 10,
+    borderRadius: 20,
+    width: '90%',
+    height: '8%',
+    paddingLeft: 10,
+  },
+  checkButtonBody: {
+    marginTop: '10%',
+    width: '80%',
+    height: '20%',
+  },
+  checkButton: {
+    height: '40%',
+    marginVertical: '2%',
+  },
+  button: {
+    height: '7%',
+    width: '50%',
+    marginTop: 10,
   },
   headerText: {
     color: 'black',
@@ -281,15 +361,14 @@ const styles = StyleSheet.create({
   },
   attendanceHistory: {
     marginTop: 20,
-    // borderWidth: 1,
     height: '50%',
     width: '100%',
-    // justifyContent: 'center',
+
     alignItems: 'center',
   },
   buttonContainer: {
-    width: '90%',
-    height: '26%',
+    width: '100%',
+    height: '100%',
   },
   todayText: {
     color: '#05aaf7',

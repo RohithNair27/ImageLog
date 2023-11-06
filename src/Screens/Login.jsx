@@ -2,12 +2,17 @@ import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
 import React, {useState} from 'react';
 import InputBox from '../components/InputBox';
 import Button from '../components/Button';
-import {launchCamera} from 'react-native-image-picker';
+
 const Login = ({navigation}) => {
   const [personData, setPersonData] = useState({
-    name: {title: 'Enter you name', value: '', keyBoardType: 'text'},
+    name: {
+      title: 'Username',
+      value: '',
+      keyBoardType: 'text',
+      maxLength: 20,
+    },
     number: {
-      title: 'Enter your mobile number',
+      title: 'Mobile number',
       value: '',
       keyBoardType: 'tel',
       maxLength: 10,
@@ -26,17 +31,17 @@ const Login = ({navigation}) => {
     <View style={styles.loginBody}>
       <View style={{width: '90%', flex: 0.4}}>
         <Image
-          source={require('../assets/Images/Image4.jpg')}
+          source={require('../assets/Images/qrImage.png')}
           resizeMode="contain"
           style={styles.image}
         />
       </View>
 
-      <View style={styles.textInputBody}>
-        <Text style={{color: 'black', fontSize: 50, fontWeight: '800'}}>
-          Welcome!
-        </Text>
+      <Text style={{color: 'black', fontSize: 50, fontWeight: '700'}}>
+        Welcome!
+      </Text>
 
+      <View style={styles.textInputBody}>
         {Object.keys(personData).map(keys => {
           return (
             <View key={keys} style={styles.mobileInputbody}>
@@ -46,6 +51,7 @@ const Login = ({navigation}) => {
                 value={personData[keys].value}
                 onValueChange={handleInputChange}
                 keyBoardType={personData[keys].keyBoardType}
+                maxLength={personData[keys].maxLength}
               />
             </View>
           );
@@ -55,7 +61,7 @@ const Login = ({navigation}) => {
         <Button
           placeHolder="Sign In"
           backGroundColor={'#f84a55'}
-          onPress={() => navigation.navigate('Attendance')}
+          onPress={() => navigation.navigate('TabNavigator')}
         />
       </View>
     </View>
@@ -69,14 +75,12 @@ const WIDTH = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   loginBody: {
-    // borderWidth: 1,
     backgroundColor: 'white',
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   image: {
-    // top: HEIGHT * 0.1,
     width: '100%',
     height: '100%',
     alignItems: 'center',
@@ -93,7 +97,7 @@ const styles = StyleSheet.create({
   },
 
   textInputBody: {
-    top: HEIGHT * 0.05,
+    top: HEIGHT * 0.09,
     alignItems: 'center',
     width: '80%',
     // borderWidth: 1,

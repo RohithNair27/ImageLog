@@ -5,24 +5,21 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
-const Switch = ({switchState}) => {
-  const [clicked, setClicked] = useState(switchState);
+const Switch = ({switchState, onPress}) => {
+  // const [clicked, setClicked] = useState(switchState);
   const toggleLength = useSharedValue(0);
 
   const onPressToggle = () => {
-    if (!clicked) {
+    if (switchState) {
       toggleLength.value = withTiming(toggleLength.value + 45, {
         duration: 200,
       });
-      console.log(clicked);
-      setClicked(!clicked);
     } else {
       toggleLength.value = withTiming(toggleLength.value - 45, {
         duration: 200,
       });
-      console.log(clicked);
-      setClicked(!clicked);
     }
+    onPress();
   };
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -36,7 +33,12 @@ const Switch = ({switchState}) => {
       style={styles.switchContainer}
       onPress={() => onPressToggle()}>
       <Animated.View
-        style={[styles.toggleButton, animatedStyle]}></Animated.View>
+        style={[
+          switchState
+            ? styles.toggleButton
+            : {...styles.toggleButton, backgroundColor: 'green'},
+          animatedStyle,
+        ]}></Animated.View>
     </TouchableOpacity>
   );
 };
