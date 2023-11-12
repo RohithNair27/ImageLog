@@ -15,7 +15,7 @@ const InputBox = ({
       placeholderTextColor={'lightgray'}
       style={styles.textBody}
       value={value}
-      onChangeText={onValueChange}
+      onChangeText={text => onValueChange(keyProps, text)}
       inputMode={keyBoardType}
       maxLength={maxLength}
     />

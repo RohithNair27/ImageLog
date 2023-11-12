@@ -4,42 +4,50 @@ import {
   DATA_NOT_UPLOADED_TO_FIREBASE,
 } from '../Constants/FirebaseConstants';
 
-//firebase collection Data
-
 //Upload the data to firebase
-export const uploadDataFireBase = async allData => {
-  console.log(allData);
-  const stringCollection = JSON.stringify(
-    allData.checkIn.Date +
-      '-' +
-      allData.checkIn.month +
-      '-' +
-      allData.checkIn.year,
-  );
-  console.log(stringCollection);
-  const stringDocument = JSON.stringify(allData.checkIn.EmployeeIdEntered);
-  if (Object.keys(allData).length === 1) {
-    console.log('entered');
+export const uploadDataFireBase = async (allData, adminId, stringDocument) => {
+  console.log('here this is in firebase');
+  console.log('in firebase');
+  //   console.log(allData);
+  const stringCollection = JSON.stringify(adminId);
 
-    const ref = firestore().collection(stringCollection);
-    const documentRef = ref.doc(stringDocument);
+  const ref = firestore().collection(stringCollection);
+  const documentRef = ref.doc(stringDocument);
+  const documentSnapshot = await documentRef.get();
+  let objectData = '';
+
+  console.log('checkIn');
+  // console.log(allData);
+  const eachEmployee = Object.values(allData)[0];
+  // console.log(eachEmployee);
+  const EachEmployeeCheckin = Object.values(eachEmployee)[0];
+  console.log(EachEmployeeCheckin);
+  var key = JSON.stringify(EachEmployeeCheckin.EmployeeIdEntered);
+  objectData = {[key]: eachEmployee};
+
+  if (documentSnapshot.exists) {
+    await documentRef.update(objectData);
+    console.log('already tehre');
+  } else {
     documentRef
-      .set(allData)
+      .set(objectData)
       .then(() => {
         console.log('uploaded');
       })
       .catch(() => {
         console.log('cant upload');
       });
-  } else {
-    const ref = firestore().collection(stringCollection);
-    const documentRef = ref.doc(stringDocument);
-    const documentSnapshot = await documentRef.get();
-    if (documentSnapshot.exists) {
-      await documentRef.update(allData);
-      console.log(' re uploaded');
-    }
   }
+
+  //   } else {
+  //     const ref = firestore().collection(stringCollection);
+  //     const documentRef = ref.doc(stringDocument);
+  //     const documentSnapshot = await documentRef.get();
+  //     if (documentSnapshot.exists) {
+  //       await documentRef.update(allData);
+  //       console.log(' re uploaded');
+  //     }
+  //   }
 
   // const stringDocument = JSON.stringify(allData[0].checkIn.EmployeeIdEntered);
   // const ref = firestore().collection(stringCollection);

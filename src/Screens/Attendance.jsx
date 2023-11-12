@@ -3,61 +3,50 @@ import {
   Text,
   View,
   Image,
-  ScrollView,
   Dimensions,
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import React, {useEffect, useState, useContext} from 'react';
+import React, {useEffect, useState, useContext, useRef} from 'react';
 import Switch from '../components/switch';
 import Button from '../components/Button';
-import DailyInfo from '../components/DailyInfo';
 import {launchCamera} from 'react-native-image-picker';
 import {request, RESULTS, PERMISSIONS} from 'react-native-permissions';
 import GetCurrentDay from '../utils/TimeUtils';
-import {storeData, getData, removeData} from '../utils/Storage';
+import {storeData, getData} from '../utils/Storage';
 import {uploadDataFireBase} from '../utils/Firebase';
+
 import InputBox from '../components/InputBox';
 
 const Attendance = ({navigation}) => {
+  // const userId = route;
+  // console.log(userId);
+  const inInitialRender = useRef(true);
+  const [checkPressed, setCheckPressed] = useState(false);
   const [newtworkState, setnewtworkState] = useState(true);
   const [waitingForUpload, setWaitingForUpload] = useState(false);
   const [Data, setData] = useState({
-    checkIn: {
-      Date: '',
-      Day: '',
-      CheckInImageUrl: '',
-      startTime: null,
-      endTime: null,
-      seconds: '',
-      EmployeeIdEntered: '',
-      month: '',
-      year: '',
-    },
-    checkOut: {
-      Date: '',
-      Day: '',
-      CheckOutImageUrl: '',
-      startTime: null,
-      endTime: null,
-      seconds: '',
-      EmployeeIdEntered: '',
-      month: '',
-      year: '',
-    },
+    LoginStatus: '',
+    EmployeeIdEntered: '',
+    Date: '',
+    Day: '',
+    ImageUrl: '',
+    Time: null,
 
-    // TotalTime: '',
+    month: '',
+    year: '',
   });
   const [EmployeeId, setEmployeeID] = useState('');
-  const [allData, setAllData] = useState([]);
+
   const [profilePictureUri, setProfilePictureUri] = useState(false);
 
   const changeNetworkMode = () => {
     setnewtworkState(!newtworkState);
   };
 
-  const handleValueChange = changed => {
+  const handleValueChange = (key, changed) => {
     setEmployeeID(changed);
+    // Data.EmployeeIdEntered(changed);
   };
 
   const Alerts = (text1, text2) =>
@@ -103,65 +92,46 @@ const Attendance = ({navigation}) => {
 
   const SendDataToFirebase = async () => {
     const storageData = await getData();
-
-    storageData.map(data => {
-      console.log('function logged');
-      uploadDataFireBase(data);
-    });
-  };
-
-  const onClickCheckOut = () => {
-    const currentHourTime = GetCurrentDay().hours;
-    const GetDay = GetCurrentDay().abbreviation;
-    const GetSeconds = GetCurrentDay().seconds;
     const currentDate = GetCurrentDay().date;
     const currentMonth = GetCurrentDay().month;
     const currentYear = GetCurrentDay().year;
-    setData({
-      ...Data,
-      checkOut: {
-        Date: currentDate,
-        Day: GetDay,
-        CheckInImageUrl: profilePictureUri,
-        startTime: currentHourTime,
-        endTime: currentHourTime,
-        seconds: GetSeconds,
-        EmployeeIdEntered: EmployeeId,
-        month: currentMonth,
-        year: currentYear,
-      },
+    const stringDocument = JSON.stringify(
+      currentDate + '-' + currentMonth + '-' + currentYear,
+    );
+
+    storageData.map(data => {
+      // console.log(userId.userId);
+      uploadDataFireBase(data, 1234, stringDocument);
     });
   };
 
   //CheckIn
   const onClickCheckIn = () => {
-    const currentHourTime = GetCurrentDay().hours;
-    const GetDay = GetCurrentDay().abbreviation;
-    const GetSeconds = GetCurrentDay().seconds;
-    const currentDate = GetCurrentDay().date;
-    const currentMonth = GetCurrentDay().month;
-    const currentYear = GetCurrentDay().year;
-
     setData({
-      ...Data,
-      checkIn: {
-        Date: currentDate,
-        Day: GetDay,
-        CheckInImageUrl: profilePictureUri,
-        startTime: currentHourTime,
-        endTime: currentHourTime,
-        seconds: GetSeconds,
-        EmployeeIdEntered: EmployeeId,
-        month: currentMonth,
-        year: currentYear,
-      },
+      LoginStatus: 'check In',
+      Date: GetCurrentDay().date,
+      Day: GetCurrentDay().abbreviation,
+      ImageUrl: profilePictureUri,
+      Time: GetCurrentDay().hours,
+      EmployeeIdEntered: EmployeeId,
+      month: GetCurrentDay().month,
+      year: GetCurrentDay().year,
     });
+    setCheckPressed(!checkPressed);
   };
 
-  const getDataFromStorage = async () => {
-    const values = await getData();
-    setAllData(values);
-    // console.log(values);
+  const onClickCheckOut = () => {
+    setData({
+      LoginStatus: 'Check Out',
+      Date: GetCurrentDay().date,
+      Day: GetCurrentDay().abbreviation,
+      ImageUrl: profilePictureUri,
+      Time: GetCurrentDay().hours,
+      EmployeeIdEntered: EmployeeId,
+      month: GetCurrentDay().month,
+      year: GetCurrentDay().year,
+    });
+    setCheckPressed(!checkPressed);
   };
 
   const handleNavigation = uri => {
@@ -169,69 +139,45 @@ const Attendance = ({navigation}) => {
     navigation.navigate('PictureView', {uri});
   };
 
-  const storeInAsync = () => {
-    if (Data.checkIn.Date === '') {
-      storeData(Data.checkOut, 'checkOut');
-    } else {
-      storeData(Data.checkIn, 'checkIn');
-    }
-
+  const storeInAsync = async () => {
+    const reply = await storeData(Data);
     setData({
-      checkIn: {
-        Date: '',
-        Day: '',
-        CheckInImageUrl: '',
-        startTime: null,
-        endTime: null,
-        seconds: '',
-        EmployeeIdEntered: '',
-      },
-      checkOut: {
-        Date: '',
-        Day: '',
-        CheckOutImageUrl: '',
-        startTime: null,
-        endTime: null,
-        seconds: '',
-        EmployeeIdEntered: '',
-      },
+      LoginStatus: '',
+      EmployeeIdEntered: '',
+      Date: '',
+      Day: '',
+      ImageUrl: '',
+      Time: null,
+
+      month: '',
+      year: '',
     });
     setProfilePictureUri(false);
     setEmployeeID('');
+    if (
+      newtworkState === true &&
+      reply !== 'Already checked out for the day ' &&
+      reply !== 'already you did checkin'
+    ) {
+      SendDataToFirebase();
+    } else {
+      Alerts('Thanks for today', reply);
+    }
   };
 
   useEffect(() => {
-    if (
-      Data.checkIn.CheckInImageUrl !== '' ||
-      Data.checkOut.CheckOutImageUrl !== ''
-    ) {
-      storeInAsync();
-      getDataFromStorage();
+    if (!inInitialRender.current) {
+      if (Data.ImageUrl === ('' || false) || Data.EmployeeIdEntered === '') {
+        Alerts('Incomplete!', 'Please Add Image and EmployeeId');
+      } else {
+        storeInAsync();
+      }
     }
-    if (
-      (Data.checkIn.CheckInImageUrl === '' ||
-        Data.checkIn.EmployeeIdEntered === '') &&
-      Data.checkIn.Date !== ''
-    ) {
-      // console.log(Data.checkIn.Date);
-      Alerts('Incomplete!!', 'Please enter Image and EmployeeId');
-    }
-
-    if (
-      Data.checkOut.CheckOutImageUrl === '' &&
-      Data.checkOut.EmployeeIdEntered === '' &&
-      Data.checkOut.Date !== ''
-    ) {
-      Alerts('Incomplete!!', 'Please enter Image and EmployeeId');
-    }
-  }, [Data]);
+  }, [checkPressed]);
 
   useEffect(() => {
-    if (newtworkState === true) {
-      SendDataToFirebase();
-    }
-    console.log(allData);
-  }, [allData]);
+    inInitialRender.current = false;
+  }, []);
 
   useState;
   return (

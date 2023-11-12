@@ -6,13 +6,13 @@ import Button from '../components/Button';
 const Login = ({navigation}) => {
   const [personData, setPersonData] = useState({
     name: {
-      title: 'Username',
+      title: 'User ID',
       value: '',
-      keyBoardType: 'text',
-      maxLength: 20,
+      keyBoardType: 'tel',
+      maxLength: 6,
     },
     number: {
-      title: 'Mobile number',
+      title: 'Password',
       value: '',
       keyBoardType: 'tel',
       maxLength: 10,
@@ -61,7 +61,10 @@ const Login = ({navigation}) => {
         <Button
           placeHolder="Sign In"
           backGroundColor={'#f84a55'}
-          onPress={() => navigation.navigate('TabNavigator')}
+          onPress={() =>
+            //  console.log(typeof personData.name.value)
+            navigation.navigate('TabNavigator', {userId: personData.name.value})
+          }
         />
       </View>
     </View>

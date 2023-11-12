@@ -9,13 +9,13 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {getData, removeData} from '../utils/Storage';
-import {useIsFocused} from '@react-navigation/native';
+import {useIsFocused, useRoute} from '@react-navigation/native';
 const LoginList = () => {
   const isFocused = useIsFocused();
   const [peopleLogedIn, setPeopleLogedIn] = useState();
   const getDataFromLocal = async () => {
     const data = await getData();
-    // console.log(data);
+    console.log(data);
     setPeopleLogedIn(data);
   };
   useEffect(() => {
@@ -23,26 +23,40 @@ const LoginList = () => {
     // removeData();
   }, [isFocused]);
   return (
-    <ScrollView style={styles.body}>
-      {peopleLogedIn?.map(element => {
-        // console.log(element);
-        return (
-          <TouchableOpacity
-            style={styles.buttonBody}
-            key={element.checkIn.EmployeeIdEntered}>
-            <Text style={{color: 'black'}}>
-              {element.checkIn.EmployeeIdEntered}
-            </Text>
+    <View style={{flex: 1}}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Employee Id</Text>
+        <Text style={styles.headerText}>Time</Text>
+        <Text style={styles.headerText}>Image</Text>
+      </View>
+      <ScrollView style={styles.body}>
+        {peopleLogedIn?.map(element => {
+          let Eachelement = Object.values(element)[0];
+          return (
+            <TouchableOpacity
+              style={styles.buttonBody}
+              key={Eachelement.CheckIn.EmployeeIdEntered}>
+              <Text style={{color: 'black'}}>
+                {Object.values(element)[0].CheckIn.EmployeeIdEntered}
+              </Text>
+              {Eachelement.CheckOut ? (
+                <Text>
+                  {Eachelement.CheckIn.Time - Eachelement.CheckOut.Time}
+                </Text>
+              ) : (
+                <Text>Not checked out</Text>
+              )}
 
-            {/* <Image
-              source={{uri: element.CheckInImageUrl}}
-              resizeMode="contain"
-              style={{height: 65, width: 65, borderRadius: 50}}
-            /> */}
-          </TouchableOpacity>
-        );
-      })}
-    </ScrollView>
+              <Image
+                source={{uri: Object.values(element)[0].CheckIn.ImageUrl}}
+                resizeMode="contain"
+                style={{height: 65, width: 65, borderRadius: 50}}
+              />
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    </View>
   );
 };
 
@@ -56,14 +70,29 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 15,
   },
+  header: {
+    backgroundColor: 'lightblue',
+    width: '100%',
+    height: HEIGHT * 0.1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    padding: 15,
+  },
+  headerText: {
+    fontSize: 17,
+    fontWeight: '900',
+    color: 'black',
+    // borderWidth: 1,
+  },
   buttonBody: {
     borderBottomWidth: 1,
-    flex: 1,
+
     // width: WIDTH,
     height: HEIGHT * 0.1,
     borderBottomColor: 'lightgray',
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
   },
 });

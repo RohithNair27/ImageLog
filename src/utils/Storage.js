@@ -1,23 +1,50 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {uploadDataFireBase} from './Firebase';
-export const storeData = async data => {
-  const new_key = data.EmployeeIdEntered;
-  const stringKey = JSON.stringify(new_key);
 
-  try {
-    const value = await AsyncStorage.getItem(stringKey);
-    const parsedData = JSON.parse(value);
-    if (value !== null) {
-      const updatedData = {...parsedData, checkOut: data};
-      const updatedStringData = JSON.stringify(updatedData);
-      await AsyncStorage.setItem(stringKey, updatedStringData);
-    } else {
-      const newData = {checkIn: data};
+export const storeData = async data => {
+  let new_key = data.EmployeeIdEntered;
+  const stringKey = JSON.stringify(new_key);
+  const value = await AsyncStorage.getItem(stringKey);
+
+  if (data.LoginStatus === 'check In') {
+    if (value === null) {
+      const newData = {
+        [new_key]: {
+          CheckIn: data,
+        },
+      };
       const stringData = JSON.stringify(newData);
       await AsyncStorage.setItem(stringKey, stringData);
+      console.log('stored in async');
+    } else {
+      return 'already you did checkin';
     }
-  } catch (e) {
-    return 'Data cannot be added';
+  } else {
+    if (value === null) {
+      console.log('Please do checkIn first');
+    } else {
+      const exsistingData = await AsyncStorage.getItem(stringKey);
+      const exsistingObjectData = JSON.parse(exsistingData);
+      // console.log(exsistingObjectData);
+      if (exsistingObjectData[new_key].CheckOut) {
+        return 'Already checked out for the day ';
+      } else {
+        console.log(exsistingObjectData[new_key]);
+        const newData = {
+          CheckOut: data,
+        };
+
+        const newObject = exsistingObjectData[new_key];
+        const updatedObject = {...newObject, ...newData};
+
+        const UpdatingData = {
+          [new_key]: updatedObject,
+        };
+        const stringData = JSON.stringify(UpdatingData);
+
+        await AsyncStorage.setItem(stringKey, stringData);
+        console.log('checked out');
+      }
+    }
   }
 };
 
