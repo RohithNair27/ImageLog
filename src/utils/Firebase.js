@@ -28,6 +28,7 @@ export const uploadDataFireBase = async (allData, adminId, stringDocument) => {
   if (documentSnapshot.exists) {
     await documentRef.update(objectData);
     console.log('already tehre');
+    // console.log(allData);
   } else {
     documentRef
       .set(objectData)

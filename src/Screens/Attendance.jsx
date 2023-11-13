@@ -30,15 +30,16 @@ const Attendance = ({navigation}) => {
     EmployeeIdEntered: '',
     Date: '',
     Day: '',
-    ImageUrl: '',
-    Time: null,
 
+    Time: null,
+    // Image: '',
     month: '',
     year: '',
   });
   const [EmployeeId, setEmployeeID] = useState('');
 
   const [profilePictureUri, setProfilePictureUri] = useState(false);
+  // const [imageBase64, setImageBase64] = useState(false);
 
   const changeNetworkMode = () => {
     setnewtworkState(!newtworkState);
@@ -73,7 +74,7 @@ const Attendance = ({navigation}) => {
   const getProfilePictureDevice = () => {
     const options = {
       mediaType: 'photo',
-      includeBase64: false,
+      includeBase64: true,
       maxHeight: 2000,
       maxWidth: 2000,
     };
@@ -83,9 +84,10 @@ const Attendance = ({navigation}) => {
       } else if (response.error) {
         console.log('Image picker error: ', response.error);
       } else {
-        let imageUri = response.assets?.[0]?.uri;
-        // console.log(imageUri);
-        setProfilePictureUri(imageUri);
+        // let imageUri = response.assets?.[0]?.uri;
+        // let base64 = response.assets?.[0]?.base64;
+        // setProfilePictureUri(imageUri);
+        // setImageBase64(base64);
       }
     });
   };
@@ -111,11 +113,12 @@ const Attendance = ({navigation}) => {
       LoginStatus: 'check In',
       Date: GetCurrentDay().date,
       Day: GetCurrentDay().abbreviation,
-      ImageUrl: profilePictureUri,
+
       Time: GetCurrentDay().hours,
       EmployeeIdEntered: EmployeeId,
       month: GetCurrentDay().month,
       year: GetCurrentDay().year,
+      // image: imageBase64,
     });
     setCheckPressed(!checkPressed);
   };
@@ -125,11 +128,12 @@ const Attendance = ({navigation}) => {
       LoginStatus: 'Check Out',
       Date: GetCurrentDay().date,
       Day: GetCurrentDay().abbreviation,
-      ImageUrl: profilePictureUri,
+
       Time: GetCurrentDay().hours,
       EmployeeIdEntered: EmployeeId,
       month: GetCurrentDay().month,
       year: GetCurrentDay().year,
+      // image: imageBase64,
     });
     setCheckPressed(!checkPressed);
   };
@@ -146,9 +150,9 @@ const Attendance = ({navigation}) => {
       EmployeeIdEntered: '',
       Date: '',
       Day: '',
-      ImageUrl: '',
-      Time: null,
 
+      Time: null,
+      // image: '',
       month: '',
       year: '',
     });
@@ -167,7 +171,10 @@ const Attendance = ({navigation}) => {
 
   useEffect(() => {
     if (!inInitialRender.current) {
-      if (Data.ImageUrl === ('' || false) || Data.EmployeeIdEntered === '') {
+      if (
+        Data.EmployeeIdEntered === ('' || false) ||
+        Data.EmployeeIdEntered === ''
+      ) {
         Alerts('Incomplete!', 'Please Add Image and EmployeeId');
       } else {
         storeInAsync();

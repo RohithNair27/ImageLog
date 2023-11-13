@@ -15,7 +15,7 @@ const LoginList = () => {
   const [peopleLogedIn, setPeopleLogedIn] = useState();
   const getDataFromLocal = async () => {
     const data = await getData();
-    console.log(data);
+    // console.log(data);
     setPeopleLogedIn(data);
   };
   useEffect(() => {
@@ -32,12 +32,13 @@ const LoginList = () => {
       <ScrollView style={styles.body}>
         {peopleLogedIn?.map(element => {
           let Eachelement = Object.values(element)[0];
+          console.log(element);
           return (
             <TouchableOpacity
               style={styles.buttonBody}
               key={Eachelement.CheckIn.EmployeeIdEntered}>
               <Text style={{color: 'black'}}>
-                {Object.values(element)[0].CheckIn.EmployeeIdEntered}
+                {Eachelement.CheckIn.EmployeeIdEntered}
               </Text>
               {Eachelement.CheckOut ? (
                 <Text>
@@ -46,12 +47,11 @@ const LoginList = () => {
               ) : (
                 <Text>Not checked out</Text>
               )}
-
-              <Image
+              {/* <Image
                 source={{uri: Object.values(element)[0].CheckIn.ImageUrl}}
                 resizeMode="contain"
                 style={{height: 65, width: 65, borderRadius: 50}}
-              />
+              /> */}
             </TouchableOpacity>
           );
         })}
