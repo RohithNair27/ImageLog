@@ -30,7 +30,7 @@ const Attendance = ({navigation}) => {
     EmployeeIdEntered: '',
     Date: '',
     Day: '',
-
+    ImageUrl: '',
     Time: null,
     // Image: '',
     month: '',
@@ -84,9 +84,9 @@ const Attendance = ({navigation}) => {
       } else if (response.error) {
         console.log('Image picker error: ', response.error);
       } else {
-        // let imageUri = response.assets?.[0]?.uri;
+        let imageUri = response.assets?.[0]?.uri;
         // let base64 = response.assets?.[0]?.base64;
-        // setProfilePictureUri(imageUri);
+        setProfilePictureUri(imageUri);
         // setImageBase64(base64);
       }
     });
@@ -113,7 +113,7 @@ const Attendance = ({navigation}) => {
       LoginStatus: 'check In',
       Date: GetCurrentDay().date,
       Day: GetCurrentDay().abbreviation,
-
+      ImageUrl: profilePictureUri,
       Time: GetCurrentDay().hours,
       EmployeeIdEntered: EmployeeId,
       month: GetCurrentDay().month,
@@ -128,7 +128,7 @@ const Attendance = ({navigation}) => {
       LoginStatus: 'Check Out',
       Date: GetCurrentDay().date,
       Day: GetCurrentDay().abbreviation,
-
+      ImageUrl: profilePictureUri,
       Time: GetCurrentDay().hours,
       EmployeeIdEntered: EmployeeId,
       month: GetCurrentDay().month,
@@ -150,7 +150,7 @@ const Attendance = ({navigation}) => {
       EmployeeIdEntered: '',
       Date: '',
       Day: '',
-
+      ImageUrl: '',
       Time: null,
       // image: '',
       month: '',
@@ -171,10 +171,7 @@ const Attendance = ({navigation}) => {
 
   useEffect(() => {
     if (!inInitialRender.current) {
-      if (
-        Data.EmployeeIdEntered === ('' || false) ||
-        Data.EmployeeIdEntered === ''
-      ) {
+      if (Data.ImageUrl === ('' || false) || Data.EmployeeIdEntered === '') {
         Alerts('Incomplete!', 'Please Add Image and EmployeeId');
       } else {
         storeInAsync();
