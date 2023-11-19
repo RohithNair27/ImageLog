@@ -15,7 +15,7 @@ const LoginList = () => {
   const [peopleLogedIn, setPeopleLogedIn] = useState();
   const getDataFromLocal = async () => {
     const data = await getData();
-    // console.log(data);
+
     setPeopleLogedIn(data);
   };
   useEffect(() => {
@@ -25,14 +25,14 @@ const LoginList = () => {
   return (
     <View style={{flex: 1}}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Employee Id</Text>
+        <Text style={styles.headerText}>EMP Id</Text>
         <Text style={styles.headerText}>Time</Text>
         <Text style={styles.headerText}>Image</Text>
       </View>
       <ScrollView style={styles.body}>
         {peopleLogedIn?.map(element => {
           let Eachelement = Object.values(element)[0];
-          console.log(element);
+
           return (
             <TouchableOpacity
               style={styles.buttonBody}
@@ -41,17 +41,17 @@ const LoginList = () => {
                 {Eachelement.CheckIn.EmployeeIdEntered}
               </Text>
               {Eachelement.CheckOut ? (
-                <Text>
+                <Text style={{color: 'black'}}>
                   {Eachelement.CheckIn.Time - Eachelement.CheckOut.Time}
                 </Text>
               ) : (
-                <Text>Not checked out</Text>
+                <Text style={{color: 'black'}}>Not checked out</Text>
               )}
-              {/* <Image
+              <Image
                 source={{uri: Object.values(element)[0].CheckIn.ImageUrl}}
                 resizeMode="contain"
                 style={{height: 65, width: 65, borderRadius: 50}}
-              /> */}
+              />
             </TouchableOpacity>
           );
         })}
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    padding: 15,
+    padding: 10,
   },
   headerText: {
     fontSize: 17,
@@ -86,13 +86,12 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
   },
   buttonBody: {
-    borderBottomWidth: 1,
-
-    // width: WIDTH,
-    height: HEIGHT * 0.1,
-    borderBottomColor: 'lightgray',
+    borderWidth: 1,
+    marginBottom: '5%',
+    height: HEIGHT * 0.15,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-around',
+    borderRadius: 10,
   },
 });

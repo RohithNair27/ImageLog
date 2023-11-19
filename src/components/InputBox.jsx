@@ -12,7 +12,7 @@ const InputBox = ({
   return (
     <TextInput
       placeholder={placeHolder}
-      placeholderTextColor={'lightgray'}
+      placeholderTextColor={'gray'}
       style={styles.textBody}
       value={value}
       onChangeText={text => onValueChange(keyProps, text)}

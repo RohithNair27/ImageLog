@@ -5,46 +5,50 @@ export const storeData = async data => {
   const stringKey = JSON.stringify(new_key);
   const value = await AsyncStorage.getItem(stringKey);
 
-  if (data.LoginStatus === 'check In') {
-    if (value === null) {
-      const newData = {
-        [new_key]: {
-          CheckIn: data,
-        },
-      };
-      const stringData = JSON.stringify(newData);
-      await AsyncStorage.setItem(stringKey, stringData);
-      console.log('stored in async');
-    } else {
-      return 'already you did checkin';
-    }
-  } else {
-    if (value === null) {
-      console.log('Please do checkIn first');
-    } else {
-      const exsistingData = await AsyncStorage.getItem(stringKey);
-      const exsistingObjectData = JSON.parse(exsistingData);
-      // console.log(exsistingObjectData);
-      if (exsistingObjectData[new_key].CheckOut) {
-        return 'Already checked out for the day ';
-      } else {
-        console.log(exsistingObjectData[new_key]);
+  try {
+    if (data.LoginStatus === 'check In') {
+      if (value === null) {
         const newData = {
-          CheckOut: data,
+          [new_key]: {
+            CheckIn: data,
+          },
         };
-
-        const newObject = exsistingObjectData[new_key];
-        const updatedObject = {...newObject, ...newData};
-
-        const UpdatingData = {
-          [new_key]: updatedObject,
-        };
-        const stringData = JSON.stringify(UpdatingData);
-
+        const stringData = JSON.stringify(newData);
         await AsyncStorage.setItem(stringKey, stringData);
-        console.log('checked out');
+        console.log('stored in async');
+      } else {
+        return 'Login completed for today';
+      }
+    } else {
+      if (value === null) {
+        console.log('Please complete checkIn');
+      } else {
+        const exsistingData = await AsyncStorage.getItem(stringKey);
+        const exsistingObjectData = JSON.parse(exsistingData);
+        // console.log(exsistingObjectData);
+        if (exsistingObjectData[new_key].CheckOut) {
+          return 'Already checked out for the day ';
+        } else {
+          console.log(exsistingObjectData[new_key]);
+          const newData = {
+            CheckOut: data,
+          };
+
+          const newObject = exsistingObjectData[new_key];
+          const updatedObject = {...newObject, ...newData};
+
+          const UpdatingData = {
+            [new_key]: updatedObject,
+          };
+          const stringData = JSON.stringify(UpdatingData);
+
+          await AsyncStorage.setItem(stringKey, stringData);
+          console.log('checked out');
+        }
       }
     }
+  } catch {
+    console.log('cant store in phone storeage');
   }
 };
 
@@ -59,7 +63,7 @@ export const getData = async () => {
         data.push(parsedData);
       }
     }
-
+    console.log(data);
     return data;
   } catch (error) {
     console.error('Error in getAllData:', error);

@@ -18,52 +18,65 @@ export const uploadDataFireBase = async (allData, adminId, stringDocument) => {
   let objectData = '';
 
   console.log('checkIn');
-  // console.log(allData);
+
   const eachEmployee = Object.values(allData)[0];
-  // console.log(eachEmployee);
+
   const EachEmployeeCheckin = Object.values(eachEmployee)[0];
-  console.log(EachEmployeeCheckin);
+
   var key = JSON.stringify(EachEmployeeCheckin.EmployeeIdEntered);
   objectData = {[key]: eachEmployee};
+  try {
+    if (documentSnapshot.exists) {
+      await documentRef.update(objectData);
+      if (Object.values(allData)[0].CheckIn) {
+        uploadImageStorage(
+          Object.values(allData)[0].CheckIn.ImageUrl,
+          adminId,
+          Object.values(allData)[0].CheckIn,
+        );
+      }
+      if (Object.values(allData)[0].CheckOut) {
+        uploadImageStorage(
+          Object.values(allData)[0].CheckOut.ImageUrl,
+          adminId,
+          Object.values(allData)[0].CheckIn,
+        );
+      }
 
-  if (documentSnapshot.exists) {
-    await documentRef.update(objectData);
-    if (Object.values(allData)[0].CheckIn) {
-      uploadImageStorage(
-        Object.values(allData)[0].CheckIn.ImageUrl,
-        adminId,
-        Object.values(allData)[0].CheckIn,
-      );
+      return 'UPDATED';
+    } else {
+      documentRef
+        .set(objectData)
+        .then(() => {
+          console.log('uploaded');
+          if (Object.values(allData)[0].CheckIn) {
+            uploadImageStorage(
+              Object.values(allData)[0].CheckIn.ImageUrl,
+              adminId,
+              Object.values(allData)[0].CheckIn,
+            );
+          }
+          return 'UPDATED';
+        })
+        .catch(() => {
+          console.log('cant upload');
+        });
     }
-    if (Object.values(allData)[0].CheckOut) {
-      uploadImageStorage(
-        Object.values(allData)[0].CheckOut.ImageUrl,
-        adminId,
-        Object.values(allData)[0].CheckIn,
-      );
-    }
-    console.log('already tehre');
-  } else {
-    documentRef
-      .set(objectData)
-      .then(() => {
-        uploadImageStorage();
-        console.log('uploaded');
-      })
-      .catch(() => {
-        console.log('cant upload');
-      });
+    return 'UPDATED';
+  } catch {
+    console.log('unable to upload');
+    return 'UNABLE TO UPLOAD';
   }
 };
 
 export const uploadImageStorage = async (ImageUrl, adminId, Data) => {
-  console.log(ImageUrl);
   if (ImageUrl) {
     var filenameWithPrefix = ImageUrl.split('/').pop();
 
     const reference = storage().ref(
       `${adminId}/${Data.Date}/${filenameWithPrefix}`,
     );
+    console.log('Pushed image');
     await reference.putFile(ImageUrl);
   }
 };

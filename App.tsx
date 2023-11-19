@@ -1,6 +1,6 @@
 import {StatusBar, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import Login from './src/Screens/Login';
+
 import StackNavigation from './src/navigation/StackNavigation';
 import {NavigationContainer} from '@react-navigation/native';
 const App = () => {

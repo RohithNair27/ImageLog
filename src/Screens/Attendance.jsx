@@ -8,19 +8,17 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState, useContext, useRef} from 'react';
-import Switch from '../components/switch';
 import Button from '../components/Button';
 import {launchCamera} from 'react-native-image-picker';
 import {request, RESULTS, PERMISSIONS} from 'react-native-permissions';
 import GetCurrentDay from '../utils/TimeUtils';
 import {storeData, getData} from '../utils/Storage';
 import {uploadDataFireBase} from '../utils/Firebase';
-
+import Modal from 'react-native-modal';
 import InputBox from '../components/InputBox';
+import {Switch} from 'react-native-switch';
 
 const Attendance = ({navigation}) => {
-  // const userId = route;
-  // console.log(userId);
   const inInitialRender = useRef(true);
   const [checkPressed, setCheckPressed] = useState(false);
   const [newtworkState, setnewtworkState] = useState(true);
@@ -32,7 +30,6 @@ const Attendance = ({navigation}) => {
     Day: '',
     ImageUrl: '',
     Time: null,
-    // Image: '',
     month: '',
     year: '',
   });
@@ -42,6 +39,7 @@ const Attendance = ({navigation}) => {
   // const [imageBase64, setImageBase64] = useState(false);
 
   const changeNetworkMode = () => {
+    console.log('pressed');
     setnewtworkState(!newtworkState);
   };
 
@@ -101,9 +99,12 @@ const Attendance = ({navigation}) => {
       currentDate + '-' + currentMonth + '-' + currentYear,
     );
 
-    storageData.map(data => {
-      // console.log(userId.userId);
-      uploadDataFireBase(data, 1234, stringDocument);
+    storageData.map(async data => {
+      setWaitingForUpload(true);
+      const returned = await uploadDataFireBase(data, 1234, stringDocument);
+      if (returned === 'UPDATED') {
+        setWaitingForUpload(false);
+      }
     });
   };
 
@@ -161,11 +162,22 @@ const Attendance = ({navigation}) => {
     if (
       newtworkState === true &&
       reply !== 'Already checked out for the day ' &&
-      reply !== 'already you did checkin'
+      reply !== 'Login completed for today'
     ) {
       SendDataToFirebase();
     } else {
-      Alerts('Thanks for today', reply);
+      if (
+        newtworkState === false &&
+        reply !== 'Already checked out for the day ' &&
+        reply !== 'Login completed for today'
+      ) {
+        Alerts(
+          'Info',
+          'Switched to offline mode Please switch it back on to get the data stored',
+        );
+      } else {
+        Alerts('Error', reply);
+      }
     }
   };
 
@@ -183,14 +195,35 @@ const Attendance = ({navigation}) => {
     inInitialRender.current = false;
   }, []);
 
+  useEffect(() => {
+    if (!inInitialRender.current) {
+      storeInAsync();
+    }
+  }, [newtworkState]);
+
   useState;
   return (
     <View style={styles.Body}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Online</Text>
-        <Switch switchState={newtworkState} onPress={changeNetworkMode} />
+        <Modal
+          isVisible={waitingForUpload}
+          animationIn={'fadeIn'}
+          animationOut={'fadeOut'}
+          animationInTiming={400}>
+          <View style={styles.waitingModalStyle}>
+            <ActivityIndicator size={60} />
+          </View>
+        </Modal>
+        <Text style={styles.headerText}>Offline</Text>
+        <Switch
+          value={newtworkState}
+          onValueChange={changeNetworkMode}
+          activeText={''}
+          inActiveText={''}
+          circleSize={35}
+        />
 
-        <Text style={styles.headerText}>offline</Text>
+        <Text style={styles.headerText}>Online</Text>
       </View>
       <View style={styles.ImageBody}>
         {profilePictureUri === false ? (
@@ -219,8 +252,9 @@ const Attendance = ({navigation}) => {
       <View style={styles.button}>
         <Button
           placeHolder="Take Image"
-          backGroundColor={'#05aaf7'}
+          backGroundColor={'#007afe'}
           onPress={getMobilePermission}
+          ImageProps="camera"
         />
       </View>
       <ActivityIndicator size={30} animating={waitingForUpload} />
@@ -228,15 +262,17 @@ const Attendance = ({navigation}) => {
         <View style={styles.checkButton}>
           <Button
             placeHolder="Check In"
-            backGroundColor={'#05aaf7'}
+            backGroundColor={'#d95e54'}
             onPress={onClickCheckIn}
+            ImageProps="login"
           />
         </View>
         <View style={styles.checkButton}>
           <Button
             placeHolder="Check Out"
-            backGroundColor={'#f84a55'}
+            backGroundColor={'#d95e54'}
             onPress={onClickCheckOut}
+            ImageProps="logout"
           />
         </View>
       </View>
@@ -353,5 +389,13 @@ const styles = StyleSheet.create({
 
     width: '100%',
     height: HEIGHT * 0.07,
+  },
+  waitingModalStyle: {
+    width: WIDTH * 0.5,
+    backgroundColor: 'white',
+    height: HEIGHT * 0.3,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
