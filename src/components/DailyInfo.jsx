@@ -3,10 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {DataContext} from '../context/DataContext/DataContext';
 
 const DailyInfo = ({element, navivation}) => {
-  // const {data} = React.useContext(DataContext);
-
   const [time, setTime] = useState();
-  // console.log(element.CheckInImageUrl);
 
   return (
     <View style={styles.body}>

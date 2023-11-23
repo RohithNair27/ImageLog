@@ -4,9 +4,8 @@ import Attendance from '../Screens/Attendance';
 import LoginList from '../Screens/LoginList';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
-const TabNavigator = ({route}) => {
+const TabNavigator = () => {
   const Tab = createBottomTabNavigator();
-  const {userId} = route.params;
 
   return (
     <Tab.Navigator
@@ -21,11 +20,7 @@ const TabNavigator = ({route}) => {
         tabBarItemStyle: {alignContent: 'center', justifyContent: 'center'},
         tabBarLabelStyle: {fontSize: 14, fontWeight: '500'},
       }}>
-      <Tab.Screen
-        name="Attendance"
-        component={Attendance}
-        initialParams={{userId}}
-      />
+      <Tab.Screen name="Attendance" component={Attendance} />
       <Tab.Screen name="List" component={LoginList} />
     </Tab.Navigator>
   );

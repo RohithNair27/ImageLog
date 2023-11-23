@@ -1,9 +1,10 @@
 import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import InputBox from '../components/InputBox';
 import Button from '../components/Button';
-
+import {DataContext} from '../context/DataContext/DataContext';
 const Login = ({navigation}) => {
+  const {setUserId} = useContext(DataContext);
   const [personData, setPersonData] = useState({
     name: {
       title: 'User ID',
@@ -18,6 +19,11 @@ const Login = ({navigation}) => {
       maxLength: 10,
     },
   });
+
+  const onSignIn = () => {
+    setUserId(personData);
+    navigation.navigate('TabNavigator');
+  };
 
   //This code handles the change in input values and adds it to personData
   const handleInputChange = (key, text) => {
@@ -63,7 +69,7 @@ const Login = ({navigation}) => {
           backGroundColor={'#f84a55'}
           onPress={() =>
             //  console.log(typeof personData.name.value)
-            navigation.navigate('TabNavigator', {userId: personData.name.value})
+            onSignIn()
           }
         />
       </View>

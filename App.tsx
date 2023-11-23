@@ -1,14 +1,16 @@
 import {StatusBar, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-
+import DataContextProvider from './src/context/DataContext/DataContextProvider';
 import StackNavigation from './src/navigation/StackNavigation';
 import {NavigationContainer} from '@react-navigation/native';
 const App = () => {
   return (
-    <NavigationContainer>
-      <StatusBar backgroundColor={'white'} />
-      <StackNavigation />
-    </NavigationContainer>
+    <DataContextProvider>
+      <NavigationContainer>
+        <StatusBar backgroundColor={'white'} />
+        <StackNavigation />
+      </NavigationContainer>
+    </DataContextProvider>
   );
 };
 

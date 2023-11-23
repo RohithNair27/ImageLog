@@ -17,8 +17,11 @@ import {uploadDataFireBase} from '../utils/Firebase';
 import Modal from 'react-native-modal';
 import InputBox from '../components/InputBox';
 import {Switch} from 'react-native-switch';
+import {DataContext} from '../context/DataContext/DataContext';
 
 const Attendance = ({navigation}) => {
+  const {userId, setUserId} = useContext(DataContext);
+
   const inInitialRender = useRef(true);
   const [checkPressed, setCheckPressed] = useState(false);
   const [newtworkState, setnewtworkState] = useState(true);
@@ -192,6 +195,7 @@ const Attendance = ({navigation}) => {
   }, [checkPressed]);
 
   useEffect(() => {
+    console.log(userId);
     inInitialRender.current = false;
   }, []);
 
