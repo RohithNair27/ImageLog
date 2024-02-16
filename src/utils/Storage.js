@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import {showMessage} from 'react-native-flash-message';
 export const storeData = async data => {
   let new_key = data.EmployeeIdEntered;
   const stringKey = JSON.stringify(new_key);
@@ -15,17 +15,23 @@ export const storeData = async data => {
         };
         const stringData = JSON.stringify(newData);
         await AsyncStorage.setItem(stringKey, stringData);
+        showMessage({
+          message: 'Success',
+          description: 'Checked In for Today',
+          type: 'success',
+        });
         console.log('stored in async');
       } else {
         return 'Login completed for today';
       }
     } else {
       if (value === null) {
-        console.log('Please complete checkIn');
+        return 'Please complete checkIn';
       } else {
         const exsistingData = await AsyncStorage.getItem(stringKey);
         const exsistingObjectData = JSON.parse(exsistingData);
         // console.log(exsistingObjectData);
+
         if (exsistingObjectData[new_key].CheckOut) {
           return 'Already checked out for the day ';
         } else {
@@ -44,6 +50,11 @@ export const storeData = async data => {
 
           await AsyncStorage.setItem(stringKey, stringData);
           console.log('checked out');
+          showMessage({
+            message: 'Success',
+            description: 'Checked out for Today',
+            type: 'success',
+          });
         }
       }
     }

@@ -11,6 +11,7 @@ const StackNavigation = () => {
     <Stack.Navigator screenOptions={styles.body}>
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="TabNavigator" component={TabNavigator} />
+      <Stack.Screen name="PictureView" component={PictureView} />
     </Stack.Navigator>
   );
 };

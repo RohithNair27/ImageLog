@@ -7,6 +7,7 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
+import FlashMessage from 'react-native-flash-message';
 import React, {useEffect, useState, useContext, useRef} from 'react';
 import Button from '../components/Button';
 import {launchCamera} from 'react-native-image-picker';
@@ -18,7 +19,7 @@ import Modal from 'react-native-modal';
 import InputBox from '../components/InputBox';
 import {Switch} from 'react-native-switch';
 import {DataContext} from '../context/DataContext/DataContext';
-
+import {showMessage, hideMessage} from 'react-native-flash-message';
 const Attendance = ({navigation}) => {
   const {userId, setUserId} = useContext(DataContext);
 
@@ -122,7 +123,6 @@ const Attendance = ({navigation}) => {
       EmployeeIdEntered: EmployeeId,
       month: GetCurrentDay().month,
       year: GetCurrentDay().year,
-      // image: imageBase64,
     });
     setCheckPressed(!checkPressed);
   };
@@ -137,14 +137,8 @@ const Attendance = ({navigation}) => {
       EmployeeIdEntered: EmployeeId,
       month: GetCurrentDay().month,
       year: GetCurrentDay().year,
-      // image: imageBase64,
     });
     setCheckPressed(!checkPressed);
-  };
-
-  const handleNavigation = uri => {
-    console.log(uri);
-    navigation.navigate('PictureView', {uri});
   };
 
   const storeInAsync = async () => {
@@ -160,24 +154,28 @@ const Attendance = ({navigation}) => {
       month: '',
       year: '',
     });
+
+    if (reply === 'Please complete checkIn' && EmployeeId !== '') {
+      Alerts('Info', 'Please checkin for today');
+      setProfilePictureUri(false);
+      setEmployeeID('');
+      return 0;
+    }
     setProfilePictureUri(false);
     setEmployeeID('');
     if (
-      newtworkState === true &&
       reply !== 'Already checked out for the day ' &&
       reply !== 'Login completed for today'
     ) {
-      SendDataToFirebase();
+      console.log('not working');
+      // SendDataToFirebase();
+      //
     } else {
       if (
-        newtworkState === false &&
-        reply !== 'Already checked out for the day ' &&
+        reply === 'Please complete checkIn' &&
         reply !== 'Login completed for today'
       ) {
-        Alerts(
-          'Info',
-          'Switched to offline mode Please switch it back on to get the data stored',
-        );
+        Alerts('Info', 'Please checkin for today');
       } else {
         Alerts('Error', reply);
       }
@@ -190,6 +188,7 @@ const Attendance = ({navigation}) => {
         Alerts('Incomplete!', 'Please Add Image and EmployeeId');
       } else {
         storeInAsync();
+        console.log('reached');
       }
     }
   }, [checkPressed]);
@@ -209,6 +208,7 @@ const Attendance = ({navigation}) => {
   return (
     <View style={styles.Body}>
       <View style={styles.header}>
+        <FlashMessage position="top" />
         <Modal
           isVisible={waitingForUpload}
           animationIn={'fadeIn'}
@@ -218,7 +218,7 @@ const Attendance = ({navigation}) => {
             <ActivityIndicator size={60} />
           </View>
         </Modal>
-        <Text style={styles.headerText}>Offline</Text>
+        {/* <Text style={styles.headerText}>Offline</Text>
         <Switch
           value={newtworkState}
           onValueChange={changeNetworkMode}
@@ -227,7 +227,7 @@ const Attendance = ({navigation}) => {
           circleSize={35}
         />
 
-        <Text style={styles.headerText}>Online</Text>
+        <Text style={styles.headerText}>Online</Text> */}
       </View>
       <View style={styles.ImageBody}>
         {profilePictureUri === false ? (

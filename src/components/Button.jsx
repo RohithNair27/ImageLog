@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   body: {
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 20,
+    borderRadius: 10,
     width: '100%',
     height: '100%',
     flexDirection: 'row',

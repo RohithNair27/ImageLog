@@ -3,6 +3,7 @@ import React, {useState, useContext} from 'react';
 import InputBox from '../components/InputBox';
 import Button from '../components/Button';
 import {DataContext} from '../context/DataContext/DataContext';
+import Logo from '../assets/Images/mindsprint-logo.svg';
 const Login = ({navigation}) => {
   const {setUserId} = useContext(DataContext);
   const [personData, setPersonData] = useState({
@@ -35,17 +36,13 @@ const Login = ({navigation}) => {
 
   return (
     <View style={styles.loginBody}>
-      <View style={{width: '90%', flex: 0.4}}>
-        <Image
-          source={require('../assets/Images/qrImage.png')}
-          resizeMode="contain"
-          style={styles.image}
+      <View style={{width: '90%', flex: 1}}>
+        <Logo
+          width={'100%'}
+          height={100}
+          style={{position: 'absolute', top: '15%'}}
         />
       </View>
-
-      <Text style={{color: 'black', fontSize: 50, fontWeight: '700'}}>
-        Welcome!
-      </Text>
 
       <View style={styles.textInputBody}>
         {Object.keys(personData).map(keys => {
@@ -67,10 +64,7 @@ const Login = ({navigation}) => {
         <Button
           placeHolder="Sign In"
           backGroundColor={'#f84a55'}
-          onPress={() =>
-            //  console.log(typeof personData.name.value)
-            onSignIn()
-          }
+          onPress={() => onSignIn()}
         />
       </View>
     </View>
@@ -99,9 +93,9 @@ const styles = StyleSheet.create({
   mobileInputbody: {
     backgroundColor: '#f1f1f3',
     marginVertical: 10,
-    borderRadius: 20,
+    borderRadius: 10,
     width: '100%',
-    height: '12%',
+    height: '17%',
     paddingLeft: 10,
   },
 
@@ -109,14 +103,12 @@ const styles = StyleSheet.create({
     top: HEIGHT * 0.09,
     alignItems: 'center',
     width: '80%',
-    // borderWidth: 1,
     flex: 1,
   },
   button: {
     bottom: HEIGHT * 0.05,
-    // borderWidth: 1,
     flex: 0.13,
     width: '80%',
-    // height: '7%',
+    height: '18%',
   },
 });

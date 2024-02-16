@@ -10,13 +10,17 @@ import {
 import React, {useEffect, useState} from 'react';
 import {getData, removeData} from '../utils/Storage';
 import {useIsFocused, useRoute} from '@react-navigation/native';
-const LoginList = () => {
+const LoginList = ({navigation}) => {
   const isFocused = useIsFocused();
   const [peopleLogedIn, setPeopleLogedIn] = useState();
   const getDataFromLocal = async () => {
     const data = await getData();
 
     setPeopleLogedIn(data);
+  };
+  const handleNavigation = uri => {
+    console.log(uri);
+    navigation.navigate('PictureView', {uri});
   };
   useEffect(() => {
     getDataFromLocal();
@@ -36,7 +40,10 @@ const LoginList = () => {
           return (
             <TouchableOpacity
               style={styles.buttonBody}
-              key={Eachelement.CheckIn.EmployeeIdEntered}>
+              key={Eachelement.CheckIn.EmployeeIdEntered}
+              onPress={() => {
+                handleNavigation(Object.values(element)[0].CheckIn.ImageUrl);
+              }}>
               <Text style={{color: 'black'}}>
                 {Eachelement.CheckIn.EmployeeIdEntered}
               </Text>
