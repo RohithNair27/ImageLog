@@ -6,6 +6,7 @@ import {
   Dimensions,
   Alert,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
 import FlashMessage from 'react-native-flash-message';
 import React, {useEffect, useState, useContext, useRef} from 'react';
@@ -17,9 +18,9 @@ import {storeData, getData} from '../utils/Storage';
 import {uploadDataFireBase} from '../utils/Firebase';
 import Modal from 'react-native-modal';
 import InputBox from '../components/InputBox';
-import {Switch} from 'react-native-switch';
+
 import {DataContext} from '../context/DataContext/DataContext';
-import {showMessage, hideMessage} from 'react-native-flash-message';
+
 const Attendance = ({navigation}) => {
   const {userId, setUserId} = useContext(DataContext);
 
@@ -207,6 +208,7 @@ const Attendance = ({navigation}) => {
   useState;
   return (
     <View style={styles.Body}>
+      <StatusBar backgroundColor={'white'} />
       <View style={styles.header}>
         <FlashMessage position="top" />
         <Modal
@@ -229,44 +231,40 @@ const Attendance = ({navigation}) => {
 
         <Text style={styles.headerText}>Online</Text> */}
       </View>
-      <View style={styles.ImageBody}>
-        {profilePictureUri === false ? (
-          <Image
-            source={require('../assets/Images/demoimage.png')}
-            resizeMode="contain"
-            style={styles.image}
-          />
-        ) : (
-          <Image
-            source={{uri: profilePictureUri}}
-            resizeMode="contain"
-            style={styles.image}
-          />
-        )}
-      </View>
-      <View style={styles.mobileInputbody}>
+
+      <Image
+        source={
+          profilePictureUri === false
+            ? require('../assets/Images/demoimage.png')
+            : {uri: profilePictureUri}
+        }
+        resizeMode="contain"
+        style={styles.image}
+      />
+      <View style={styles.textInputBody}>
         <InputBox
-          placeHolder={'employee Id'}
+          placeHolder={'Unique id'}
           value={EmployeeId}
           onValueChange={handleValueChange}
           keyBoardType={'tel'}
           maxLength={6}
+          icon={'id-card'}
         />
+        <View style={styles.button}>
+          <Button
+            placeHolder="Take Image"
+            backGroundColor={'#007afe'}
+            onPress={getMobilePermission}
+            ImageProps="camera"
+          />
+        </View>
       </View>
-      <View style={styles.button}>
-        <Button
-          placeHolder="Take Image"
-          backGroundColor={'#007afe'}
-          onPress={getMobilePermission}
-          ImageProps="camera"
-        />
-      </View>
-      <ActivityIndicator size={30} animating={waitingForUpload} />
+
       <View style={styles.checkButtonBody}>
         <View style={styles.checkButton}>
           <Button
             placeHolder="Check In"
-            backGroundColor={'#d95e54'}
+            backGroundColor={'#f84a55'}
             onPress={onClickCheckIn}
             ImageProps="login"
           />
@@ -274,7 +272,7 @@ const Attendance = ({navigation}) => {
         <View style={styles.checkButton}>
           <Button
             placeHolder="Check Out"
-            backGroundColor={'#d95e54'}
+            backGroundColor={'#f84a55'}
             onPress={onClickCheckOut}
             ImageProps="logout"
           />
@@ -294,11 +292,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  header: {
-    width: '80%',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-  },
+
   image: {
     height: 150,
     width: 150,
@@ -306,33 +300,25 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     justifyContent: 'center',
   },
-  ImageBody: {
-    height: '40%',
-    width: '85%',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
+  textInputBody: {
+    // borderWidth: 1,
+    width: '80%',
+    height: '30%',
     alignItems: 'center',
-  },
-  mobileInputbody: {
-    backgroundColor: '#f1f1f3',
-    marginVertical: 10,
-    borderRadius: 20,
-    width: '90%',
-    height: '8%',
-    paddingLeft: 10,
+
+    justifyContent: 'space-evenly',
   },
   checkButtonBody: {
-    marginTop: '10%',
+    // borderWidth: 1,
     width: '80%',
-    height: '20%',
+    height: '15%',
   },
   checkButton: {
-    height: '40%',
-    marginVertical: '2%',
+    height: '70%',
   },
   button: {
-    height: '7%',
-    width: '50%',
+    height: '35%',
+    width: '60%',
     marginTop: 10,
   },
   headerText: {
@@ -349,27 +335,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
   },
-  attendanceHistory: {
-    marginTop: 20,
-    height: '50%',
-    width: '100%',
 
-    alignItems: 'center',
-  },
   buttonContainer: {
     width: '100%',
     height: '100%',
   },
-  todayText: {
-    color: '#05aaf7',
-    fontSize: 25,
-    fontWeight: '600',
-  },
-  timeText: {
-    color: 'black',
-    fontSize: 45,
-    fontWeight: '800',
-  },
+
   timeTrackedText: {
     color: 'gray',
   },

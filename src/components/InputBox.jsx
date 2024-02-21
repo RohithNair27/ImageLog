@@ -1,6 +1,7 @@
 import {StyleSheet, Text, View, TextInput} from 'react-native';
-import React from 'react';
-
+import React, {useRef} from 'react';
+import Icon from 'react-native-vector-icons/Ionicons';
+import IconAnt from 'react-native-vector-icons/AntDesign';
 const InputBox = ({
   placeHolder,
   value,
@@ -8,17 +9,24 @@ const InputBox = ({
   onValueChange,
   keyProps,
   maxLength,
+  icon,
+  secureText,
 }) => {
   return (
-    <TextInput
-      placeholder={placeHolder}
-      placeholderTextColor={'gray'}
-      style={styles.textBody}
-      value={value}
-      onChangeText={text => onValueChange(keyProps, text)}
-      inputMode={keyBoardType}
-      maxLength={maxLength}
-    />
+    <View style={styles.textBody}>
+      <Icon name={icon} size={25} color="gray" />
+
+      <TextInput
+        placeholder={placeHolder}
+        placeholderTextColor={'lightgray'}
+        value={value}
+        onChangeText={text => onValueChange(keyProps, text)}
+        inputMode={keyBoardType}
+        maxLength={maxLength}
+        style={styles.inputbox}
+        secureTextEntry={secureText}
+      />
+    </View>
   );
 };
 
@@ -28,9 +36,20 @@ const styles = StyleSheet.create({
   textBody: {
     alignItems: 'center',
     justifyContent: 'center',
-    color: 'black',
     fontWeight: '600',
+    fontFamily: 'DMSans_18pt-ExtraBold',
+    height: '24%',
+    width: '100%',
+    borderWidth: 1,
+    borderColor: 'lightgray',
+    paddingLeft: '10%',
+    flexDirection: 'row',
+  },
+  inputbox: {
     height: '100%',
     width: '100%',
+    color: 'black',
+    paddingLeft: '5%',
+    fontFamily: 'DMSans_18pt-Bold',
   },
 });

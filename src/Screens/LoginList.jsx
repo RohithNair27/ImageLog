@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  StatusBar,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {getData, removeData} from '../utils/Storage';
@@ -24,41 +25,74 @@ const LoginList = ({navigation}) => {
   };
   useEffect(() => {
     getDataFromLocal();
-    // removeData();
   }, [isFocused]);
   return (
     <View style={{flex: 1}}>
+      <StatusBar backgroundColor={'#ed1515'} />
       <View style={styles.header}>
-        <Text style={styles.headerText}>EMP Id</Text>
-        <Text style={styles.headerText}>Time</Text>
-        <Text style={styles.headerText}>Image</Text>
+        <View style={styles.headerCheck}>
+          <Text style={{fontWeight: '800', fontSize: 20, color: 'white'}}>
+            Checked in: 10
+          </Text>
+          <Text style={{fontWeight: '800', fontSize: 20, color: 'white'}}>
+            Checked out: 4
+          </Text>
+        </View>
+        <Text style={{fontWeight: '800', fontSize: 20, color: 'white'}}>
+          Currently in office: 6
+        </Text>
       </View>
       <ScrollView style={styles.body}>
         {peopleLogedIn?.map(element => {
-          let Eachelement = Object.values(element)[0];
+          let eachelement = Object.values(element)[0];
 
           return (
             <TouchableOpacity
               style={styles.buttonBody}
-              key={Eachelement.CheckIn.EmployeeIdEntered}
+              key={eachelement.CheckIn.EmployeeIdEntered}
               onPress={() => {
                 handleNavigation(Object.values(element)[0].CheckIn.ImageUrl);
               }}>
-              <Text style={{color: 'black'}}>
-                {Eachelement.CheckIn.EmployeeIdEntered}
-              </Text>
-              {Eachelement.CheckOut ? (
-                <Text style={{color: 'black'}}>
-                  {Eachelement.CheckIn.Time - Eachelement.CheckOut.Time}
-                </Text>
-              ) : (
-                <Text style={{color: 'black'}}>Not checked out</Text>
-              )}
               <Image
                 source={{uri: Object.values(element)[0].CheckIn.ImageUrl}}
                 resizeMode="contain"
                 style={{height: 65, width: 65, borderRadius: 50}}
               />
+              <View>
+                <Text
+                  style={{color: 'black', fontFamily: 'DMSans_18pt-ExtraBold'}}>
+                  <Text style={styles.placeholder}> Emp id:</Text>{' '}
+                  {eachelement.CheckIn.EmployeeIdEntered}
+                </Text>
+                <Text
+                  style={{color: 'black', fontFamily: 'DMSans_18pt-ExtraBold'}}>
+                  <Text style={styles.placeholder}>Login time:</Text>
+                  {eachelement.CheckIn.Date +
+                    '/' +
+                    eachelement.CheckIn.month +
+                    '/' +
+                    eachelement.CheckIn.year}
+                </Text>
+                <Text style={{color: 'black'}}>
+                  {/* <Text style={{color: 'black'}}>
+                    
+                    <Text style={styles.placeholder}>Login time:</Text>
+                    
+                    {eachelement.CheckOut.Date +
+                      '/' +
+                      eachelement.CheckOut.month +
+                      '/' +
+                      eachelement.CheckOut.year}
+                  </Text> */}
+                </Text>
+              </View>
+              {/* {eachelement.CheckOut ? (
+                <Text style={{color: 'black'}}>
+                  {eachelement.CheckIn.Time - eachelement.CheckOut.Time}
+                </Text>
+              ) : (
+                <Text style={{color: 'black'}}>Not checked out</Text>
+              )} */}
             </TouchableOpacity>
           );
         })}
@@ -78,19 +112,27 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   header: {
-    backgroundColor: 'lightblue',
+    backgroundColor: '#ed1515',
     width: '100%',
-    height: HEIGHT * 0.1,
+    height: HEIGHT * 0.2,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
     padding: 10,
+    flexDirection: 'column',
+  },
+  headerCheck: {
+    // borderWidth: 1,
+    width: '90%',
+    flexDirection: 'row',
+    display: 'flex',
+    justifyContent: 'space-around',
   },
   headerText: {
     fontSize: 17,
     fontWeight: '900',
     color: 'black',
-    // borderWidth: 1,
+    fontFamily: 'DMSans_18pt-ExtraBold',
   },
   buttonBody: {
     borderWidth: 1,
@@ -100,5 +142,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     borderRadius: 10,
+  },
+  placeholder: {
+    fontSize: 18,
+    fontWeight: '600',
   },
 });

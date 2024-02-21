@@ -1,23 +1,35 @@
-import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Dimensions,
+  StatusBar,
+} from 'react-native';
 import React, {useState, useContext} from 'react';
 import InputBox from '../components/InputBox';
 import Button from '../components/Button';
 import {DataContext} from '../context/DataContext/DataContext';
 import Logo from '../assets/Images/mindsprint-logo.svg';
+
 const Login = ({navigation}) => {
   const {setUserId} = useContext(DataContext);
   const [personData, setPersonData] = useState({
     name: {
-      title: 'User ID',
+      title: 'Login ID',
       value: '',
-      keyBoardType: 'tel',
+      keyBoardType: 'numeric',
       maxLength: 6,
+      icons: 'person',
+      secureText: false,
     },
     number: {
       title: 'Password',
       value: '',
-      keyBoardType: 'tel',
+      keyBoardType: 'numeric',
       maxLength: 10,
+      icons: 'lock-closed',
+      secureText: true,
     },
   });
 
@@ -36,33 +48,30 @@ const Login = ({navigation}) => {
 
   return (
     <View style={styles.loginBody}>
-      <View style={{width: '90%', flex: 1}}>
-        <Logo
-          width={'100%'}
-          height={100}
-          style={{position: 'absolute', top: '15%'}}
-        />
-      </View>
+      <StatusBar backgroundColor={'white'} />
+
+      <Logo width={'100%'} height={30} style={styles.image} />
 
       <View style={styles.textInputBody}>
         {Object.keys(personData).map(keys => {
           return (
-            <View key={keys} style={styles.mobileInputbody}>
-              <InputBox
-                keyProps={keys}
-                placeHolder={personData[keys].title}
-                value={personData[keys].value}
-                onValueChange={handleInputChange}
-                keyBoardType={personData[keys].keyBoardType}
-                maxLength={personData[keys].maxLength}
-              />
-            </View>
+            //
+            <InputBox
+              keyProps={keys}
+              placeHolder={personData[keys].title}
+              value={personData[keys].value}
+              onValueChange={handleInputChange}
+              keyBoardType={personData[keys].keyBoardType}
+              maxLength={personData[keys].maxLength}
+              icon={personData[keys].icons}
+              secureText={personData[keys].secureText}
+            />
           );
         })}
       </View>
-      <View style={styles.button}>
+      <View style={styles.mobileInputbody}>
         <Button
-          placeHolder="Sign In"
+          placeHolder="Login"
           backGroundColor={'#f84a55'}
           onPress={() => onSignIn()}
         />
@@ -80,30 +89,31 @@ const styles = StyleSheet.create({
   loginBody: {
     backgroundColor: 'white',
     flex: 1,
+    // borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   image: {
-    width: '100%',
-    height: '100%',
+    borderWidth: 1,
+
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   mobileInputbody: {
-    backgroundColor: '#f1f1f3',
-    marginVertical: 10,
-    borderRadius: 10,
-    width: '100%',
-    height: '17%',
-    paddingLeft: 10,
+    // borderWidth: 1,
+    width: '80%',
+    height: '10%',
+
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 
   textInputBody: {
-    top: HEIGHT * 0.09,
     alignItems: 'center',
     width: '80%',
-    flex: 1,
+    height: '30%',
+    justifyContent: 'space-evenly',
   },
   button: {
     bottom: HEIGHT * 0.05,
