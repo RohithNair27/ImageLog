@@ -206,21 +206,22 @@ const Attendance = ({navigation}) => {
   }, [newtworkState]);
 
   useState;
+
   return (
     <View style={styles.Body}>
-      <StatusBar backgroundColor={'white'} />
-      <View style={styles.header}>
-        <FlashMessage position="top" />
-        <Modal
-          isVisible={waitingForUpload}
-          animationIn={'fadeIn'}
-          animationOut={'fadeOut'}
-          animationInTiming={400}>
-          <View style={styles.waitingModalStyle}>
-            <ActivityIndicator size={60} />
-          </View>
-        </Modal>
-        {/* <Text style={styles.headerText}>Offline</Text>
+      <FlashMessage position="top" />
+      {/* <StatusBar backgroundColor={'white'} /> */}
+
+      <Modal
+        isVisible={waitingForUpload}
+        animationIn={'fadeIn'}
+        animationOut={'fadeOut'}
+        animationInTiming={400}>
+        <View style={styles.waitingModalStyle}>
+          <ActivityIndicator size={60} />
+        </View>
+      </Modal>
+      {/* <Text style={styles.headerText}>Offline</Text>
         <Switch
           value={newtworkState}
           onValueChange={changeNetworkMode}
@@ -230,7 +231,6 @@ const Attendance = ({navigation}) => {
         />
 
         <Text style={styles.headerText}>Online</Text> */}
-      </View>
 
       <Image
         source={
@@ -291,6 +291,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  header: {
+    width: '40%',
+    height: '1%',
+    borderWidth: 1,
   },
 
   image: {

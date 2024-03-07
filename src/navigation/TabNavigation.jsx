@@ -16,9 +16,7 @@ const TabNavigator = () => {
           elevation: 1,
           borderColor: 'transparent',
         },
-
         tabBarIconStyle: {display: 'none'},
-        // tabBarIconStyle: <Icon name="rocket" size={30} color="#900" />,
         tabBarItemStyle: {alignContent: 'center', justifyContent: 'center'},
         tabBarLabelStyle: {fontSize: 14, fontWeight: '500'},
       }}>

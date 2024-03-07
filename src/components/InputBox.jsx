@@ -1,7 +1,6 @@
 import {StyleSheet, Text, View, TextInput} from 'react-native';
 import React, {useRef} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
-import IconAnt from 'react-native-vector-icons/AntDesign';
 const InputBox = ({
   placeHolder,
   value,

@@ -50,13 +50,13 @@ const Login = ({navigation}) => {
     <View style={styles.loginBody}>
       <StatusBar backgroundColor={'white'} />
 
-      <Logo width={'100%'} height={30} style={styles.image} />
+      <Logo width={'100%'} height={'4%'} style={styles.image} />
 
       <View style={styles.textInputBody}>
         {Object.keys(personData).map(keys => {
           return (
-            //
             <InputBox
+              key={keys}
               keyProps={keys}
               placeHolder={personData[keys].title}
               value={personData[keys].value}

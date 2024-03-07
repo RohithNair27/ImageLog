@@ -14,9 +14,10 @@ import {useIsFocused, useRoute} from '@react-navigation/native';
 const LoginList = ({navigation}) => {
   const isFocused = useIsFocused();
   const [peopleLogedIn, setPeopleLogedIn] = useState();
+
   const getDataFromLocal = async () => {
     const data = await getData();
-
+    console.log(data.length);
     setPeopleLogedIn(data);
   };
   const handleNavigation = uri => {
@@ -28,18 +29,36 @@ const LoginList = ({navigation}) => {
   }, [isFocused]);
   return (
     <View style={{flex: 1}}>
-      <StatusBar backgroundColor={'#ed1515'} />
+      {isFocused ? <StatusBar backgroundColor={'#ed1515'} /> : null}
       <View style={styles.header}>
         <View style={styles.headerCheck}>
-          <Text style={{fontWeight: '800', fontSize: 20, color: 'white'}}>
-            Checked in: 10
+          <Text
+            style={{
+              fontWeight: '800',
+              fontSize: 23,
+              color: 'white',
+              fontFamily: 'DMSans_18pt-ExtraBold',
+            }}>
+            Check in: 10
           </Text>
-          <Text style={{fontWeight: '800', fontSize: 20, color: 'white'}}>
-            Checked out: 4
+          <Text
+            style={{
+              fontWeight: '800',
+              fontSize: 23,
+              color: 'white',
+              fontFamily: 'DMSans_18pt-ExtraBold',
+            }}>
+            Check out: 4
           </Text>
         </View>
-        <Text style={{fontWeight: '800', fontSize: 20, color: 'white'}}>
-          Currently in office: 6
+        <Text
+          style={{
+            fontWeight: '800',
+            fontSize: 23,
+            color: 'white',
+            fontFamily: 'DMSans_18pt-ExtraBold',
+          }}>
+          Currently in office: {peopleLogedIn?.length}
         </Text>
       </View>
       <ScrollView style={styles.body}>
@@ -73,26 +92,21 @@ const LoginList = ({navigation}) => {
                     '/' +
                     eachelement.CheckIn.year}
                 </Text>
-                <Text style={{color: 'black'}}>
-                  {/* <Text style={{color: 'black'}}>
-                    
+                <Text
+                  style={{color: 'black', fontFamily: 'DMSans_18pt-ExtraBold'}}>
+                  <Text style={{color: 'black'}}>
                     <Text style={styles.placeholder}>Login time:</Text>
-                    
-                    {eachelement.CheckOut.Date +
-                      '/' +
-                      eachelement.CheckOut.month +
-                      '/' +
-                      eachelement.CheckOut.year}
-                  </Text> */}
+
+                    {eachelement.CheckOut
+                      ? eachelement.CheckOut.Date +
+                        '/' +
+                        eachelement.CheckOut.month +
+                        '/' +
+                        eachelement.CheckOut.year
+                      : '---'}
+                  </Text>
                 </Text>
               </View>
-              {/* {eachelement.CheckOut ? (
-                <Text style={{color: 'black'}}>
-                  {eachelement.CheckIn.Time - eachelement.CheckOut.Time}
-                </Text>
-              ) : (
-                <Text style={{color: 'black'}}>Not checked out</Text>
-              )} */}
             </TouchableOpacity>
           );
         })}
@@ -114,7 +128,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#ed1515',
     width: '100%',
-    height: HEIGHT * 0.2,
+    height: HEIGHT * 0.19,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
@@ -126,7 +140,7 @@ const styles = StyleSheet.create({
     width: '90%',
     flexDirection: 'row',
     display: 'flex',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
   },
   headerText: {
     fontSize: 17,
@@ -136,6 +150,7 @@ const styles = StyleSheet.create({
   },
   buttonBody: {
     borderWidth: 1,
+    borderColor: 'lightgray',
     marginBottom: '5%',
     height: HEIGHT * 0.15,
     alignItems: 'center',
