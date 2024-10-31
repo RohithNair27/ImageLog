@@ -8,12 +8,22 @@ const InputBox = ({
   onValueChange,
   keyProps,
   maxLength,
+  height,
+  width,
+  backGroundColor,
+  paddingLeft,
 }) => {
   return (
     <TextInput
       placeholder={placeHolder}
-      placeholderTextColor={'gray'}
-      style={styles.textBody}
+      placeholderTextColor={'black'}
+      style={{
+        ...styles.textBody,
+        width,
+        height,
+        backgroundColor: backGroundColor,
+        paddingLeft: paddingLeft,
+      }}
       value={value}
       onChangeText={text => onValueChange(keyProps, text)}
       inputMode={keyBoardType}
@@ -29,8 +39,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     color: 'black',
-    fontWeight: '600',
-    height: '100%',
-    width: '100%',
   },
 });

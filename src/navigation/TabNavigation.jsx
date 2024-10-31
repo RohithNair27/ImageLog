@@ -1,7 +1,8 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Switch} from 'react-native';
 import React from 'react';
 import Attendance from '../Screens/Attendance';
 import LoginList from '../Screens/LoginList';
+import OfflineOnline from '../components/OfflineOnline';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 const TabNavigator = () => {
@@ -10,11 +11,20 @@ const TabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        headerShown: false,
         tabBarStyle: {
           backgroundColor: 'white',
           elevation: 0,
           borderColor: 'transparent',
+        },
+        headerRight: () => <OfflineOnline />,
+        headerStyle: {
+          backgroundColor: '#FFC834',
+          height: 80,
+        },
+        headerTitle: '',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+          color: 'white',
         },
         tabBarIconStyle: {display: 'none'},
         tabBarItemStyle: {alignContent: 'center', justifyContent: 'center'},

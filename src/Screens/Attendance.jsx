@@ -6,6 +6,7 @@ import {
   Dimensions,
   Alert,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
 import React, {useEffect, useState, useContext, useRef} from 'react';
 import Button from '../components/Button';
@@ -16,9 +17,8 @@ import {storeData, getData} from '../utils/Storage';
 import {uploadDataFireBase} from '../utils/Firebase';
 import Modal from 'react-native-modal';
 import InputBox from '../components/InputBox';
-import {Switch} from 'react-native-switch';
 import {DataContext} from '../context/DataContext/DataContext';
-
+import MaleProfile from '../assets/Images/MaleProfile.svg';
 const Attendance = ({navigation}) => {
   const {userId, setUserId} = useContext(DataContext);
 
@@ -208,6 +208,7 @@ const Attendance = ({navigation}) => {
   useState;
   return (
     <View style={styles.Body}>
+      <StatusBar backgroundColor={'#FFC834'} />
       <View style={styles.header}>
         <Modal
           isVisible={waitingForUpload}
@@ -218,24 +219,10 @@ const Attendance = ({navigation}) => {
             <ActivityIndicator size={60} />
           </View>
         </Modal>
-        <Text style={styles.headerText}>Offline</Text>
-        <Switch
-          value={newtworkState}
-          onValueChange={changeNetworkMode}
-          activeText={''}
-          inActiveText={''}
-          circleSize={35}
-        />
-
-        <Text style={styles.headerText}>Online</Text>
       </View>
       <View style={styles.ImageBody}>
         {profilePictureUri === false ? (
-          <Image
-            source={require('../assets/Images/demoimage.png')}
-            resizeMode="contain"
-            style={styles.image}
-          />
+          <MaleProfile />
         ) : (
           <Image
             source={{uri: profilePictureUri}}

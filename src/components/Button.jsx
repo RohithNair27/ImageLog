@@ -8,10 +8,22 @@ import {
 import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const Button = ({placeHolder, backGroundColor, onPress, ImageProps}) => {
+const Button = ({
+  placeHolder,
+  backGroundColor,
+  onPress,
+  ImageProps,
+  width,
+  height,
+}) => {
   return (
     <TouchableOpacity
-      style={{...styles.body, backgroundColor: backGroundColor}}
+      style={{
+        ...styles.body,
+        backgroundColor: backGroundColor,
+        width: width,
+        height: height,
+      }}
       onPress={() => onPress()}>
       <Icon
         name={ImageProps}
@@ -31,7 +43,6 @@ const styles = StyleSheet.create({
   body: {
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 20,
     width: '100%',
     height: '100%',
     flexDirection: 'row',
